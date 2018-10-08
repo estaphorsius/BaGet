@@ -1,0 +1,73 @@
+- name: Install NuGet server behind NGINX
+  hosts: nuget
+
+  remote_user: root
+
+  vars:
+    baget_install_path: /opt/baget
+
+  #roles:
+  #  - { role: nginx }
+  #  - { role: dotnetcore }
+
+  tasks:
+    - name: Delete existing installation
+      file:
+        state: absent
+        path: "{{ baget_install_path }}"
+
+    - name: Create directory for frontend files
+      file:
+        path: "{{ baget_install_path }}"
+        state: directory
+        mode: 0755
+
+    - name: Copy baget package
+      copy:
+        src: "../temp/artifacts/baget-{{ package_version }}.tar.gz"
+        dest: "{{ baget_install_path }}/install/"
+
+    - name: Extract package
+      unarchive:
+        remote_src: yes
+        src: "{{ baget_install_path }}/install/baget-{{ package_version }}.tar.gz"
+        dest: "{{ baget_install_path }}"
+
+    - name: Copy SSL certificate from local machine
+      copy:
+        src: "{{ certificate_file }}"
+        dest: /etc/ssl
+
+    - name: Copy SSL private key from local machine
+      copy:
+        src: "{{ private_key_file }}"
+        dest: /etc/ssl
+
+    - name: "Make service"
+      copy:
+        src: files/baget.service
+        dest: /etc/systemd/system
+
+    - name: "Reload Systemd deamon to adjust to service file changes"
+      shell: systemctl daemon-reload
+
+    - name: "Start the service"
+      service:
+        name: baget.service
+        state: restarted
+        enabled: yes
+
+    - name: Overwrite nginx configuration
+      copy:
+        src: files/nginx.conf
+        dest: /etc/nginx
+
+    - name: Reload nginx configuration
+      command: nginx -s reload
+
+    - name: Stop firewall
+      command: systemctl stop firewalld
+      ignore_errors: yes
+
+    - name: Disable firewall from starting
+      command: systemctl disable firewalld

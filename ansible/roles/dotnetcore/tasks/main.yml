@@ -1,0 +1,20 @@
+- name: Add the dotnet product feed
+  command: rpm --import https://packages.microsoft.com/keys/microsoft.asc
+
+- name: Add product feed keys
+  command: sh -c 'echo -e "[packages-microsoft-com-prod]\nname=packages-microsoft-com-prod \nbaseurl= https://packages.microsoft.com/yumrepos/microsoft-rhel7.3-prod\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/dotnetdev.repo'
+
+- name: Install libunwind
+  yum:
+    name: libunwind
+    state: latest
+
+- name: Install libicu
+  yum:
+    name: libicu
+    state: latest
+
+- name: Install dotnet-sdk
+  yum:
+    name: dotnet-sdk-2.1
+    state: latest

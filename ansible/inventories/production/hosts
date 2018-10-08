@@ -1,0 +1,8 @@
+[backend]
+127.0.0.1
+
+[frontend]
+127.0.0.1
+
+[monitoring]
+127.0.0.1

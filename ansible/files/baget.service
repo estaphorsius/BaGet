@@ -1,0 +1,14 @@
+[Unit]
+Description=BaGet Nuget Server
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Environment=ASPNETCORE_URLS=http://+:7000
+WorkingDirectory=/opt/baget
+ExecStart=/usr/share/dotnet/dotnet /opt/baget/BaGet.dll
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

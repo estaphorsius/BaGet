@@ -14,3 +14,5 @@ dotnet ef migrations add Initial --context SqlServerContext --output-dir Migrati
 
 dotnet ef database update
 ```
+
+dotnet nuget push -s https://nuget.bether.net/v3/index.json /Users/elmar/Source/pinqfin/src/Pinqfin.Entities/bin/Debug/Pinqfin.Entities.1.1.0.nupkg
